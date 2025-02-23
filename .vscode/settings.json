@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Persia.sln"
+    "dotnet.defaultSolution": "Prince-of-Persia-remastered.sln"
 }
