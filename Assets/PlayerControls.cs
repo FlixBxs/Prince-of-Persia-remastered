@@ -118,7 +118,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.tag == "Heilig")
         {
             audioPlayer2.Play();
-            Invoke("zweiteScene", 3f);
+            
         }
 
     }
@@ -130,7 +130,16 @@ public class PlayerController : MonoBehaviour
     {
         if (collider.gameObject.tag == "Tod")
         {
-            transform.position = new Vector2(-16f, -3.6f);
+            transform.position = new Vector2(-16f, -3.8f);
+        }
+         if (collider.gameObject.tag == "Tp 2 Level")
+        {
+            Invoke("zweiteScene", 3f);
+        }
+        if (collider.gameObject.tag == "Schließen")
+        {
+            Invoke("QuitGame", 10f);
+            Application.Quit();
         }
     }
 }

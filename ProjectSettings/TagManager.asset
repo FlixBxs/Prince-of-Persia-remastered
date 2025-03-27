@@ -7,6 +7,8 @@ TagManager:
   - Bosssound
   - Heilig
   - Tod
+  - Tp 2 Level
+  - "Schlie\xDFen"
   layers:
   - Default
   - TransparentFX
