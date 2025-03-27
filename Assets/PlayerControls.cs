@@ -18,8 +18,11 @@ public class PlayerController : MonoBehaviour
     private bool links;
     private bool rechts;
     private bool idle;
+    private bool jumplinks;
+    private bool jumprechts;
     private Animator animator;
-    private bool Sprung = true;
+    private bool Sprung = false;
+    private bool Sprung2 = false;
 
     private void Awake()
     {
@@ -37,12 +40,14 @@ public class PlayerController : MonoBehaviour
         horizontaleBewegung = Input.GetAxisRaw("Horizontal");
 
         // Springen, wenn Leertaste gedrückt wird und der Spieler am Boden ist
-        if (Input.GetButtonDown("Jump") && Sprung)
+        if (Input.GetKeyDown(KeyCode.Space) && Sprung == false)
         {
             StartCoroutine(Jumpreset());
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, sprungKraft);
-            Sprung = false;
+            Sprung = true;
+            Sprung2 = true;
             Debug.Log("Sprung");
+            Debug.Log("Sprung2");
         }
     }
 
@@ -52,35 +57,56 @@ public class PlayerController : MonoBehaviour
         // Horizontale Bewegung anwenden
         rb.linearVelocity = new Vector2(horizontaleBewegung * bewegungsGeschwindigkeit, rb.linearVelocity.y);
 
-        if (horizontaleBewegung > 0)
+        if (horizontaleBewegung > 0 && Sprung == false)
         {
             animator.SetBool("rechts", true);
             animator.SetBool("links", false);
             animator.SetBool("idle", false);
-            StopCoroutine(SetIdleAfterDelay());
         }
-        else if (horizontaleBewegung < 0)
+        else if (horizontaleBewegung < 0 && Sprung == false)
         {
             animator.SetBool("links", true);
             animator.SetBool("rechts", false);
             animator.SetBool("idle", false);
-            StopCoroutine(SetIdleAfterDelay());
         }
         else if (horizontaleBewegung == 0)
         {
-            StartCoroutine(SetIdleAfterDelay());
+            animator.SetBool("idle", true);
+            animator.SetBool("links", false);
+            animator.SetBool("rechts", false);
         }
-    }
+        else if (horizontaleBewegung > 0 && Sprung2 == true)
+        {
+            animator.SetBool("idle", false);
+            animator.SetBool("links", false);
+            animator.SetBool("rechts", false);
+            animator.SetTrigger("jumprechts");
+            Sprung2 = false;
+        }
+        else if (horizontaleBewegung < 0 && Sprung2 == true)
+        {
+            animator.SetBool("links", false);
+            animator.SetBool("rechts", false);
+            animator.SetBool("idle", false);
+            animator.SetTrigger("jumplinks");
+            Sprung2 = false;
+        }
+        else if (horizontaleBewegung == 0 && Sprung2 == true)
+        {
+            animator.SetBool("idle", false);
+            animator.SetTrigger("jumplinks");
+            animator.SetBool("links", false);
+            animator.SetBool("rechts", false);
+            animator.SetTrigger("jumprechts");
+            Debug.Log("Sprung2");
+            Sprung2 = false;
+        }
 
-    private IEnumerator SetIdleAfterDelay()
-    {
-        yield return new WaitForSeconds(0.2f);
-        animator.SetBool("idle", true);
     }
     private IEnumerator Jumpreset()
     {
         yield return new WaitForSeconds(1f);
-        Sprung = true;
+        Sprung = false;
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -99,6 +125,13 @@ public class PlayerController : MonoBehaviour
     private void zweiteScene()
     {
         transform.position = new Vector2(270f, 0f);
+    }
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.gameObject.tag == "Tod")
+        {
+            transform.position = new Vector2(-16f, -3.6f);
+        }
     }
 }
 
