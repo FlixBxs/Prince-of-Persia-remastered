@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    // Spielt Sounds bei Collision ab
+    public AudioSource audioPlayer;
+    public AudioSource audioPlayer2;
+
     // Bewegungsvariablen
     [SerializeField] private float bewegungsGeschwindigkeit = 5f;
     [SerializeField] private float sprungKraft = 12f;
@@ -48,7 +52,7 @@ public class PlayerController : MonoBehaviour
         // Horizontale Bewegung anwenden
         rb.linearVelocity = new Vector2(horizontaleBewegung * bewegungsGeschwindigkeit, rb.linearVelocity.y);
 
-         if (horizontaleBewegung > 0)
+        if (horizontaleBewegung > 0)
         {
             animator.SetBool("rechts", true);
             animator.SetBool("links", false);
@@ -77,6 +81,24 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         Sprung = true;
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Bosssound")
+        {
+            audioPlayer.Play();
+        }
+        if (collision.gameObject.tag == "Heilig")
+        {
+            audioPlayer2.Play();
+            Invoke("zweiteScene", 3f);
+        }
+
+    }
+    private void zweiteScene()
+    {
+        transform.position = new Vector2(270f, 0f);
     }
 }
 
